@@ -37,8 +37,43 @@ struct oddevennode{
 	struct oddevennode * random;
 
 };
+struct oddevennode* connect(struct oddevennode *root, struct oddevennode *temp)
+{
+	if (root == NULL)
+	{
+		root = temp;
+		return temp;
+	}
+	root->random = temp;
+	return temp;
 
+}
 int * oddeven_sll(struct oddevennode *head){
 
-	return NULL;
+	if (head == NULL)
+		return NULL;
+	int *counts;
+	counts = (int*)calloc(2,sizeof(int));
+	struct oddevennode *oddhead = NULL, *evenhead = NULL, *oddLast = NULL, *evenLast = NULL;
+	printf("\n");
+	while (head)
+	{
+		printf("%d ", head->data);
+		if (head->data % 2 != 0)
+		{
+			oddLast = connect(oddLast, head);
+			if (oddhead == NULL)
+				oddhead = oddLast;
+			counts[0]++;
+		}
+		else
+		{
+			evenLast = connect(evenLast, head);
+			if (evenhead == NULL)
+				evenhead = evenLast;
+			counts[1]++;
+		}
+		head = head->next;
+	}
+	return counts;
 }

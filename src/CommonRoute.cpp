@@ -49,7 +49,82 @@ First Island in DTD ie 'D' occurs alphabatically before 'H' and 'Z')
 #include <stdio.h>
 
 
-char * find_common_route(char * hacklist, char *codelist, int *cost){
-	return NULL;
+int find_cost(char *codelist, int from, int till)
+{
+	int cost = 0;
+	while (from < till)
+	{
+		cost = cost + (codelist[from] - 64);
+		from++;
+	}
+	return cost;
 }
+void process(char *codelist, int *start, int *end, int *cost, int from, int till)
+{
+	int v1 = *end - *start;
+	int v2 = till - from;
+	int v3 = 0;
+	if (v1 < v2 || v1 == 0)
+	{
+		*start = from;
+		*end = till;
+		*cost = find_cost(codelist, from, till);
+	}
+	else if (v1 == v2)
+	{
+		v3 = find_cost(codelist, from, till);
+		if (v3 < *cost)
+		{
+			*cost = v3;
+			*start = from;
+			*end = till;
+		}
+		else if (v3 == *cost)
+		{
+			if (codelist[from] < codelist[*start])
+			{
+				*start = from;
+				*end = till;
+			}
 
+		}
+
+	}
+}
+char * find_common_route(char * hacklist, char *codelist, int *cost){
+
+	if (hacklist == NULL || codelist == NULL)
+		return NULL;
+	int start = 0, end = 0, k, size, i = 0, j, hack_from, code_from, till = 0;
+	char *result = NULL;
+	while (hacklist[i] != '\0')
+	{
+		k = 0;
+		while (hacklist[i] != codelist[k] && codelist[k] != '\0')
+		{
+			k++;
+		}
+		if (k >= start && k < end)
+			k = end;
+		code_from = k;
+		hack_from = i;
+		while (hacklist[i] == codelist[k] && hacklist[i] != '\0' && codelist[k] != '\0')
+		{
+			k++;
+			i++;
+		}
+		till = i;
+		process(codelist, &start, &end, cost, code_from, k);
+		i = hack_from + 1;
+	}
+	size = end - start;
+	result = (char*)malloc(size*sizeof(char));
+	i = 0;
+	while (start < end)
+	{
+		result[i++] = codelist[start];
+		start++;
+	}
+	result[i] = '\0';
+	return result;
+}
